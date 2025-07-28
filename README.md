@@ -1,93 +1,169 @@
-# zypline
+# **Zypline PowerShell Module**
 
+ Quickly locate items across configured or specified paths, apply various filters, and receive results in a human-readable format.
 
+## **✨ Features**
 
-## Getting started
+* **Configurable Search Paths:** Define and manage your search locations via a JSON configuration file.  
+* **Flexible Filtering:** Search by name (wildcard or regex), exclude specific file extensions, and filter by last write time.  
+* **Item Type Selection:** Search for files, folders, or both.  
+* **Recursive Search:** Dive deep into subdirectories.  
+* **Human-Readable Sizes:** Convert file sizes to KB, MB, GB, etc., for easy understanding.  
+* **Enhanced Console Output:** Utilizes custom console coloring (via New-ColorConsole) and emojis for a professional and intuitive user experience.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## **📦 Installation**
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+To install the zypline module, follow these steps:
 
-## Add your files
+## **🛠️ Usage**
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+### **Get-ZyplineConfiguration**
 
+Retrieves the current zypline module's configuration. If no configuration file exists, it will create a default one at `$env:USERPROFILE\Documents\zypline\config.json`.
+
+#### **Syntax**
+
+```powershell
+Get-ZyplineConfiguration
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/phellams/zypline.git
-git branch -M main
-git push -uf origin main
+
+#### **Examples**
+
+```powershell
+# Get the current configuration  
+Get-ZyplineConfiguration
+```
+```powershell
+# Store the configuration in a variable  
+$Config = Get-ZyplineConfiguration  
+$Config.SearchPaths
 ```
 
-## Integrate with your tools
+### **Set-ZyplineConfiguration**
 
-- [ ] [Set up project integrations](https://gitlab.com/phellams/zypline/-/settings/integrations)
+Saves a given configuration object to the config.json file, overwriting any existing configuration.
 
-## Collaborate with your team
+#### **Syntax**
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```powershell
+Set-ZyplineConfiguration -Configuration <PSCustomObject>
+```
 
-## Test and Deploy
+#### **Examples**
 
-Use the built-in continuous integration in GitLab.
+```powershell
+# Create a new configuration object and save it  
+$NewConfig = [PSCustomObject]@{  
+    SearchPaths = @("C:\Projects", "D:\Data")  
+}  
+Set-ZyplineConfiguration -Configuration $NewConfig
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```powershell
+# Update an existing configuration  
+$CurrentConfig = Get-ZyplineConfiguration  
+$CurrentConfig.SearchPaths += "E:\Archives"  
+Set-ZyplineConfiguration -Configuration $CurrentConfig
+```
 
-***
+### **Add-ZyplineSearchPath**
 
-# Editing this README
+Adds one or more paths to the zypline search configuration. It ensures that only unique, existing paths are added.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### **Syntax**
 
-## Suggestions for a good README
+```powershell
+Add-ZyplineSearchPath -Path <String[]>
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+#### **Examples**
 
-## Name
-Choose a self-explaining name for your project.
+```powershell
+# Add a single search path  
+Add-ZyplineSearchPath -Path "C:\MyImportantFolder"
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```powershell
+# Add multiple search paths  
+Add-ZyplineSearchPath -Path "C:\Logs", "D:\Backups"
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### **Remove-ZyplineSearchPath**
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Removes one or more paths from the zypline search configuration.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+#### **Syntax**
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```powershell
+Remove-ZyplineSearchPath -Path <String[]>
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+#### **Examples**
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+```powershell
+# Remove a single search path  
+Remove-ZyplineSearchPath -Path "$env:USERPROFILE\Downloads"
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+```powershell
+# Remove multiple search paths  
+Remove-ZyplineSearchPath -Path "C:\OldLogs", "D:\Temp"
+```
+### **Find-ZyplineItem**
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+The core search function. It searches configured paths (or explicit paths) for files and folders, applying various filters.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+#### **Syntax**
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+```powershell
+Find-ZyplineItem  
+    [-Path <String[]>]  
+    [-IncludePattern <String>]  
+    [-ExcludePattern <String>]  
+    [-ExcludeExtension <String[]>]  
+    [-OlderThan <DateTime>]  
+    [-SearchFolders]  
+    [-SearchFiles]  
+    [-Recurse]  
+    [-UseRegex]  
+    [<CommonParameters>]
+```
 
-## License
-For open source projects, say how it is licensed.
+#### **Parameters**
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+* -**Path** `<String[]>`: One or more root paths to start the search from. If omitted, configured paths are used.  
+* -**IncludePattern** `<String>`: A pattern to include items whose names match. Can be wildcard (e.g., *.log) or regex (with `-UseRegex`).  
+* -**ExcludePattern** `<String>`: A pattern to exclude items whose names match. Can be wildcard or regex.  
+* -**ExcludeExtension** `<String[]>`: An array of file extensions (e.g., "txt", "log") to exclude. Case-insensitive, no dot required.  
+* -**OlderThan** `<DateTime>`: Only include items with a LastWriteTime older than this date.  
+* -**SearchFolders**: Include folders in the search results.  
+* -**SearchFiles**: Include files in the search results. By default, only files are searched if neither `-SearchFolders` nor `-SearchFiles` is specified. If both are specified, both files and folders are searched.  
+* -**Recurse**: Include subdirectories recursively.  
+* -**UseRegex**: Treat `-IncludePattern` and `-ExcludePattern` as regular expressions.
+
+#### **Examples**
+
+```powershell
+# 📄 Find all .log files recursively in configured paths  
+Find-ZyplineItem -IncludePattern "*.log" -Recurse
+
+# 🔍 Search a specific path for files older than 30 days, excluding .tmp and .bak  
+Find-ZyplineItem -Path "C:\Temp" -ExcludeExtension "tmp", "bak" -OlderThan (Get-Date).AddDays(-30) -Recurse
+
+# 📁 Find folders starting with "Project" recursively  
+Find-ZyplineItem -SearchFolders -IncludePattern "Project*" -Recurse
+
+# 📝 Find files matching a specific date pattern using regex  
+Find-ZyplineItem -IncludePattern "^\d{4}-\d{2}-\d{2}\_report\.txt$" -UseRegex -Recurse
+
+# 📂📄 Find both files and folders containing "config" in their name  
+Find-ZyplineItem -IncludePattern "\*config\*" -SearchFiles -SearchFolders -Recurse  
+```
+
+# **Contributing**
+
+If you find a bug or have a suggestion, please [open an issue](https://github.com/your-username/zypline/issues) or [create a pull request](https://github.com/your-username/zypline/pulls).
+
+# **License**
+
+This project is released under the [MIT License](https://opensource.org/licenses/MIT).
